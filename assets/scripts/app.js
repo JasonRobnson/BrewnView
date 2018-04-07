@@ -1,21 +1,91 @@
 'use strict'
 
+// render drop-down radius
+$(document).ready(function(){
+  $('select').formSelect();
+});
+
+
 $(document).ready(function(){
 
-    var options = {hover: true};
-    var elem = document.querySelector('.dropdown-trigger');
-    var instance = M.Dropdown.init(elem, options);  
+    // var options = {hover: true};
+    // var elem = document.querySelector('.dropdown-trigger');
+    // var instance = M.Dropdown.init(elem, options);  
 
   // Global Variables
   const apiKey = "IB4MtYCaYXdQIdqm4K7847xEzhASkSEll2GFdl2tKVcElY8dSP3w-LCa03qSscEkwKVncUnsR5AizTA7EdD7FHmM1Qsr781Rsc3EqeKCIDw7jd8PFMRNaK1OwXS6WnYx"
   let fetchUrl;
   let userLat;
   let userLng;
+  let miles;
+  let meters;
+  let starPaths = [
+    // 0 Star Image Index 0
+    "./assets/images/yelp_stars/regular_0.png", 
+    // 1.5 Star Image Index 1
+    "./assets/images/yelp_stars/regular_1_half.png",
+    // 1 Star Image Index 2
+    "./assets/images/yelp_stars/regular_1.png",
+    // 2.5 Star Image Index 3
+    "./assets/images/yelp_stars/regular_2_half.png",
+    // 2 Star Image Index 4
+    "./assets/images/yelp_stars/regular_2.png",
+    // 3.5 Star Image Index 5
+    "./assets/images/yelp_stars/regular_3_half.png",
+    // 3 Star Image Index 6
+    "./assets/images/yelp_stars/regular_3.png",
+    // 4.5 Star Image Index 7
+    "./assets/images/yelp_stars/regular_4_half.png",
+    // 4 Star Image Index 8
+    "./assets/images/yelp_stars/regular_4.png",
+    // 5 Star Image Index 9
+    "./assets/images/yelp_stars/regular_5.png"
+  ]
 
-  // General Use Function
+  // General Use Functions
   function milesToMeters (miles){
-    meterConversion = miles * 1609.34;
-    return meterConversion;
+    return Math.floor(miles * 1609.34);
+  };
+
+  function determineStars(rating) {
+    let imgPath;
+
+    if (rating == 0) {
+      imgPath = starPaths[0] 
+
+    } else if (rating == 1) {
+      imgPath = starPaths[2]
+
+    } else if (rating == 1.5) {
+      imgPath = starPaths[1]
+
+    } else if (rating == 2) {
+      imgPath = starPaths[4]
+
+    } else if (rating == 2.5) {
+      imgPath = starPaths[3]
+
+    } else if (rating == 3) {
+      imgPath = starPaths[6]
+
+    } else if (rating == 3.5) {
+      imgPath = starPaths[5]
+
+    } else if (rating == 4) {
+      imgPath = starPaths[8]
+
+    } else if (rating == 4.5) {
+      imgPath = starPaths[7]
+
+    } else if (rating == 5) {
+      imgPath = starPaths[9]
+
+    } else {
+      console.log("There is an error with the rating")
+    }
+
+    return imgPath
+
   };
 
   function bizIteration (array) {
@@ -25,7 +95,7 @@ $(document).ready(function(){
       let newBrewSpan = $("<span>")
       let newBrewDiv = $("<div>")
 
-      newBrewDiv.attr("class", "brewery-div row")
+      newBrewDiv.attr("class", "brewery-div row z-depth-2")
       newBrewDiv.attr("id", currentBiz.id)
   
       let colLeft = $("<div>").attr("class", "col s12 m4")
@@ -44,12 +114,13 @@ $(document).ready(function(){
   
   
       // Center Column Elements
-      let rating = $("<p>").attr("id", 'rating')
+      let yelpImg = determineStars(currentBiz.rating)
+      let rating = $("<img>").attr("src", yelpImg)
       let cost = $("<p>").attr("id", 'cost')
       let status = $("<p>").attr("id", 'status')
   
       rating.text(currentBiz.rating)
-      cost.text(currentBiz.price)
+      cost.text(`Price Range: ${currentBiz.price}`)
   
       if(currentBiz.is_closed) {
         status.text("Currently Closed")
@@ -62,15 +133,15 @@ $(document).ready(function(){
       // Right Column Elements
       let distance = $("<p>").attr("id", "distance")
       let address  = $("<p>").attr("id", "address")
-      let phone = $("<p>").attr("id", "phone")
+      let phoneLink = $("<a>").attr("href", `tel:${currentBiz.phone}`)
       let yelpPage = $("<a>").attr("id", "yelp-page")
   
-      address.html(currentBiz.location.display_address[0] + "<br>" + currentBiz.location.display_address[1])
-      phone.text(currentBiz.phone)
+      address.html("Address:" + "<br>" + currentBiz.location.display_address[0] + "<br>" + currentBiz.location.display_address[1])
+      phoneLink.html(`Phone:<br>${currentBiz.display_phone}<br><br>`)
       yelpPage.text("View on Yelp")
       yelpPage.attr("href", currentBiz.url)
   
-      colRight.append(address, phone, yelpPage)
+      colRight.append(address, phoneLink, yelpPage)
   
       // Adding Elements to the page
       newBrewDiv.append(newBrewSpan, colLeft, colCenter, colRight)
@@ -83,12 +154,24 @@ $(document).ready(function(){
   // Parallax Function
   $('.parallax').parallax();
 
+
   // On Click function for Specified Location
   $("#searchButton").on("click", function(e) {
     event.preventDefault();
 
+    miles = parseInt($("#milesRadius").val())
+        console.log("radius: " + miles + " miles");
+
+    // Checks to make sure miles is a number
+    if (isNaN(miles)) {
+      meters = milesToMeters(5);
+    } else {
+      meters = milesToMeters(miles);
+    }
+
     // Removes previously Viewed Breweries
     $("#breweryElement").empty()
+
 
     //catches information from search field. 
     let searchTitle = $("#searchField").val();
@@ -97,7 +180,7 @@ $(document).ready(function(){
     //attaches User search result to the https address required by googlemaps api
     let userPreLimSearch = "https://maps.googleapis.com/maps/api/geocode/json?address="+ codedSearchTitle +"&key=AIzaSyBSnJtTqZp2Nzg7w1o1rF19y2Eic3IuhCQ"
 
-  
+    // Start of Geolocation fucntioN
     $.ajax({
       url: userPreLimSearch,
       method: "GET",
@@ -107,8 +190,8 @@ $(document).ready(function(){
       userLat = response.results[0].geometry.location.lat;
       userLng = response.results[0].geometry.location.lng;
 
-      // Start of Geolocation fucntioN
-      let fetchUrl = `https://cors-anywhere.herokuapp.com/https://api.yelp.com/v3/businesses/search?term=breweries&latitude=${userLat}&longitude=${userLng}&limit=10`
+
+      let fetchUrl = `https://cors-anywhere.herokuapp.com/https://api.yelp.com/v3/businesses/search?term=breweries&latitude=${userLat}&longitude=${userLng}&radius=${meters}`
 
       let myHeaders = new Headers();
       myHeaders.append("Authorization", "Bearer " + apiKey);
@@ -120,21 +203,34 @@ $(document).ready(function(){
       }).then((json) => {
 
         let listOfBusinesses = json.businesses
+        console.log(listOfBusinesses)
 
         // Iterates through the list of businesses and creats divs
         bizIteration(listOfBusinesses)
 
       });
 
-    })
+    });
 
   });
 
+
   // On Click Function for Current Location
   $("#current-location").on("click", function () {
+    
+    miles = parseInt($("#milesRadius").val())
+        console.log("radius: " + miles + " miles");
+
+    // Checks to make sure miles is a number
+    if (isNaN(miles)) {
+      meters = milesToMeters(5);
+    } else {
+      meters = milesToMeters(miles);
+    }
 
     // Removes previously Viewed Breweries
     $("#breweryElement").empty()
+
 
     // Start of Geolocation fucntion
     navigator.geolocation.getCurrentPosition(function(position) {
@@ -143,8 +239,9 @@ $(document).ready(function(){
       userLat = position.coords.latitude
       userLng = position.coords.longitude
 
+
       // Changes the fetch URL
-      fetchUrl = `https://cors-anywhere.herokuapp.com/https://api.yelp.com/v3/businesses/search?term=breweries&latitude=${userLat}&longitude=${userLng}&limit=10`
+      let fetchUrl = `https://cors-anywhere.herokuapp.com/https://api.yelp.com/v3/businesses/search?term=breweries&latitude=${userLat}&longitude=${userLng}&radius=${meters}`
 
       // Creates the headers class object that holds the API key
       let myHeaders = new Headers();
@@ -158,6 +255,7 @@ $(document).ready(function(){
       }).then((json) => {
 
         let listOfBusinesses = json.businesses
+        console.log(listOfBusinesses)
 
         // Iterates through the list of businesses and creates divs
         bizIteration(listOfBusinesses)

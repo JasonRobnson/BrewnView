@@ -32,13 +32,27 @@
     text-shadow: 0px 1px 58px #000000;
     font-size: 14vw;
 
-
 }
+
+#targetIcon {
+    margin-left: 1px;
+    font-size: 14px;
+    padding-left: 5px;
+    margin-right: -9px;
+}
+
+#current-location {
+    font-size: 15px;
+}
+
 
 h4 {
     text-align: center;
     font-size: 3.28rem;
     color: #f5f5f5 !important;
+    margin: 32px 6px 25px 6px;
+    border-bottom-width: 3px;
+    border-bottom-style: solid;
 }
 
 
@@ -51,11 +65,7 @@ p {
 
 
 
-
-
-
-#breweryElement
-{
+#breweryElement {
     max-width: 1280px;
     width: auto;
 
@@ -63,11 +73,10 @@ p {
 }
 
 .brewery-div,
-.breweryInfo
-{
+.breweryInfo {
     font-size: 19px;
-/*    border-color: black;
-*/    border-width: 1px;
+/*    border-color: black; */
+    border-width: 1px;
     border-radius: 7px;
     border-style: solid;
     margin: 0% 3% 3% 3%;
@@ -76,24 +85,28 @@ p {
 }
 
 
-#picture
-{
+#picture {
     width: 150px;
 }
 
+img.responsive-img, video.responsive-video {
+    max-width: 78%;
+    height: auto;
+}
 
-.brewery-img
-{
+
+.brewery-img {
 /*    height: 100px !important;*/
-    margin: 2%
+    margin: 2%;
     border-color: #00000014;
     border-width: 3px;
     border-style: solid;
-    border-radius: 5px;;
+    margin-bottom: 9%;
+    margin-left: 7%;
+    border-radius: 2%;
 }
 
-footer
-{
+footer {
     text-align: center;
 }
 
@@ -102,8 +115,51 @@ body {
     display: flex;
     min-height: 100vh;
     flex-direction: column;
-  }
+}
 
-  main {
+main {
     flex: 1 0 auto;
-  }
+}
+
+/* search box colors: ----> */  
+
+  /* label focus color */
+.input-field input:focus + label {
+    color: black !important;
+}
+  /* label underline focus color */
+.row .input-field input:focus {
+    border-bottom: 1px solid black !important;
+    box-shadow: 0 1px 0 0 black !important
+}
+    /* options color drop-down menu */
+ul.dropdown-content.select-dropdown li span {
+    color: black; /* no need for !important :) */
+}
+  /* icon prefix focus color */
+.input-field .prefix.active {
+    color: black;
+}
+  /* label color */
+.input-field label {
+    color: black;
+}
+  /* label focus color */
+.input-field input[type=text]:focus + label {
+    color: black;
+}
+  /* label underline focus color */
+.input-field input[type=text]:focus {
+    border-bottom: 1px solid black;
+    box-shadow: 0 1px 0 0 black;
+}
+  /* valid color */
+.input-field input[type=text].valid {
+    border-bottom: 1px solid black;
+    box-shadow: 0 1px 0 0 black;
+}
+  /* invalid color */
+.input-field input[type=text].invalid {
+    border-bottom: 1px solid black;
+    box-shadow: 0 1px 0 0 black;
+}
