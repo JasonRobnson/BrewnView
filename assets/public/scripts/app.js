@@ -179,7 +179,7 @@ $(document).ready(function() {
                 userLng = response.results[0].geometry.location.lng;
 
 
-                let fetchUrl = `https://cors-anywhere.herokuapp.com/https://api.yelp.com/v3/businesses/search?term=breweries&latitude=${userLat}&longitude=${userLng}&radius=${meters}`
+                let fetchUrl = `/api//https://api.yelp.com/v3/businesses/search?term=breweries&latitude=${userLat}&longitude=${userLng}&radius=${meters}`
 
                 let myHeaders = new Headers();
                 myHeaders.append("Authorization", "Bearer " + apiKey);
@@ -228,7 +228,7 @@ $(document).ready(function() {
 
 
             // Changes the fetch URL
-            let fetchUrl = `https://cors-anywhere.herokuapp.com/https://api.yelp.com/v3/businesses/search?term=breweries&latitude=${userLat}&longitude=${userLng}&radius=${meters}`
+            let fetchUrl = `/api//https://api.yelp.com/v3/businesses/search?term=breweries&latitude=${userLat}&longitude=${userLng}&radius=${meters}`
 
             // Creates the headers class object that holds the API key
             let myHeaders = new Headers();
